@@ -1,9 +1,8 @@
-import { interval, of } from "rxjs";
+import { connectable, interval, of, ReplaySubject } from "rxjs";
 import { scan, map, take, share, concatMap } from "rxjs/operators";
 
 test();
-function test()
-{
+function test() {
   /* This section is used for experimenting
   with rxjs functionality */
 
@@ -106,8 +105,8 @@ function test()
   //     var f = new Function("return " + some_fixed_value);
   //     console.log(f());
 
-      //var delay = 50;
-      // 1. Tell TypeScript that `run` exists
+  //var delay = 50;
+  // 1. Tell TypeScript that `run` exists
   // interface Function {
   //   run(this: Function, delay: number): void;
   //   //  ^^^^^^^^^^^^^^−−−−−− 2. Tell TypeScript that `this` within the call will
@@ -131,7 +130,7 @@ function test()
   // };
   // (Function.prototype as any).run(2000);
   /* End define new global function */
-  
+
   // Function.prototype.run = function (delay: number) {
   //   // some content;
   //   console.log("");
@@ -376,56 +375,58 @@ function test()
 
 
   // Cold observable example
-/*     const observer1 = {
-    test: 1,
-    next: (data: any) => console.log('Observer1 got a next value: ', data),
-    error: (err: any) => console.error('Observer1 got an error: ' + err),
-    complete: () => console.log('Observer1 got a complete notification'),
-  };
-  const observer2 = {
-    test: 1,
-    next: (data: any) => console.log('Observer2 got a next value: ', data),
-    error: (err: any) => console.error('Observer2 got an error: ' + err),
-    complete: () => console.log('Observer2 got a complete notification'),
-  };
-  const observable = new Observable(function (subscriber) {
-    subscriber.next(1);
-    subscriber.next(2);
-    subscriber.next(3);
-    setTimeout(() => {
-      subscriber.next(4);
-      subscriber.complete();
-    }, 0);
-  });
+  /*     const observer1 = {
+      test: 1,
+      next: (data: any) => console.log('Observer1 got a next value: ', data),
+      error: (err: any) => console.error('Observer1 got an error: ' + err),
+      complete: () => console.log('Observer1 got a complete notification'),
+    };
+    const observer2 = {
+      test: 1,
+      next: (data: any) => console.log('Observer2 got a next value: ', data),
+      error: (err: any) => console.error('Observer2 got an error: ' + err),
+      complete: () => console.log('Observer2 got a complete notification'),
+    };
+    const observable = new Observable(function (subscriber) {
+      subscriber.next(1);
+      subscriber.next(2);
+      subscriber.next(3);
+      setTimeout(() => {
+        subscriber.next(4);
+        subscriber.complete();
+      }, 0);
+    });
+  
+  
+    observable.subscribe(observer1);
+    observable.subscribe(observer2);
+  */
 
 
-  observable.subscribe(observer1);
-  observable.subscribe(observer2);
-*/     
   // concatMap example
-  const src = of(1, 2, 3);
-
-  const result = src.pipe(
-    map( (src :number) => src*10)
-  )
-  // const result = src.pipe(
-  //    concatMap( src.subscribe(v => v*10))
-  //  )
-  result.subscribe(value => {
-    console.log(value)
-  });
-
-  let srcObservable= of(1,2)
-  let innerObservable= of('A','B','C','D')
-  // For every number will emit 4 letters 
-  srcObservable.pipe(
-    concatMap( val => innerObservable/* interval(1000).pipe(take(4)) */)
-  )    
-  .subscribe(ret=> {
-    console.log('Recd ' + ret);
-  })
+  /*   const src = of(1, 2, 3);
   
+    const result = src.pipe(
+      map( (src :number) => src*10)
+    )
+    // const result = src.pipe(
+    //    concatMap( src.subscribe(v => v*10))
+    //  )
+    result.subscribe(value => {
+      console.log(value)
+    });
   
+    let srcObservable= of(1,2)
+    let innerObservable= of('A','B','C','D')
+    // For every number will emit 4 letters 
+    srcObservable.pipe(
+      concatMap( val => innerObservable)
+    )    
+    .subscribe(ret=> {
+      console.log('Recd ' + ret);
+    })
+   */
+
   // function as a property of an object literal.
   /*     var obj = {
         queryString: (value: string) => {
@@ -436,6 +437,7 @@ function test()
       obj.queryString("here");
       let variable = obj.eggs;
    */
+
   // 'share' operator example - complicated
   /*    const source = interval(1000).pipe(take(3), share(
         {
@@ -487,46 +489,60 @@ function test()
       }, 2000);
    */
 
-  // Hot observable example
-  /*     let liveStreaming$ = interval(1000).pipe(
-        take(5),
-        share({connector: () => new ReplaySubject(1),
-        resetOnComplete: false,})
-        );
-      
-      liveStreaming$.subscribe({
-        next: data => console.log('subscriber from first: ' + this.first++),
-        error: err => console.log(err),
-        complete: () => console.log('first completed')
+  // Hot observable example - according to me wrong
+  /*   let first = 0;
+    let second = 0;
+    let liveStreaming$ = interval(1000).pipe(
+      take(5),
+      share({
+        connector: () => new ReplaySubject(1),
+        resetOnComplete: false,
       })
-      
-      setTimeout(() => {
-        liveStreaming$.subscribe({
-          next: data => console.log('subscriber from 2nd: ' + this.second++),
-          error: err => console.log(err),
-          complete: () => console.log('2nd  completed')
-        })
-      }, 3000) */
-
-
-  // Hot observable example with connectable
-  /*     let stream$ =
-      interval(1000).pipe(
-        take(4),
-        share()
-      );
-      
-      let connectableStream$ = connectable(stream$);
-      
-      setTimeout(() => {
-        connectableStream$.subscribe(
-          {
-            next: data => console.log(data)
-          })
-      }, 2000);
-      connectableStream$.connect();
+    );
   
+    liveStreaming$.subscribe({
+      next: data => console.log('subscriber from 1st: ' + first++),
+      error: err => console.log(err),
+      complete: () => console.log('1st completed')
+    })
+  
+    setTimeout(() => {
+      liveStreaming$.subscribe({
+        next: data => console.log('subscriber from 2nd: ' + second++),
+        error: err => console.log(err),
+        complete: () => console.log('2nd  completed')
+      })
+    }, 3000)
    */
+
+  let stream$ =
+    interval(1000).pipe(
+      take(5),
+      share()
+    );
+
+  // Hot observable example with connectable to miss first few values
+  /* let connectableStream$ = connectable(stream$);  // Creates an observable that multicasts 
+                                                    // once connect() is called on it
+  setTimeout(() => {
+    connectableStream$.subscribe(
+      {
+        next: data => console.log("Connectable " + data)
+      })
+  }, 3000);
+  connectableStream$.connect();
+ */
+
+  // Hot obervable to miss first few values
+  console.log("Trying to miss last few values");
+  let teardown = stream$.subscribe(
+    {
+      next: data => console.log("Early values " + data)
+    })
+  setTimeout(() => {
+    teardown.unsubscribe();
+  }, 2000);
+
 
   // General example with using pipe and map
   /*
@@ -560,7 +576,7 @@ function test()
   // interface IMessagesOperation {
   //   (messages: number[]): number[];
   // }
-  
+
   // let markThreadAsRead: Subject<any> = new Subject<any>();
   // const initialMessages: number[] = [];
   // //let newMessages: Subject<number> = new Subject<number>();
@@ -671,27 +687,27 @@ function test()
 
   // If you want to have return value about the first scan you have to save the 
   // return value of the pipe and extend it with an extra pipe.
-/*     let numbers$ = from([4, 5, 6]);
-
-  let val1 = numbers$
-    .pipe(
-      // Get the sum of the numbers coming in.
+  /*     let numbers$ = from([4, 5, 6]);
+  
+    let val1 = numbers$
+      .pipe(
+        // Get the sum of the numbers coming in.
+        scan((total, n) => {
+          return total + n
+        }, 0),
+  
+        // Get the average by dividing the sum by the total number
+        // received so var (which is 1 more than the zero-based index).
+        //map((sum, index) => sum / (index + 1))
+      )
+  
+    val1.subscribe(x => console.log('value of the first scan is', x))
+    val1.pipe(
       scan((total, n) => {
         return total + n
-      }, 0),
-
-      // Get the average by dividing the sum by the total number
-      // received so var (which is 1 more than the zero-based index).
-      //map((sum, index) => sum / (index + 1))
-    )
-
-  val1.subscribe(x => console.log('value of the first scan is', x))
-  val1.pipe(
-    scan((total, n) => {
-      return total + n
-    }, 0)
-  ).subscribe(x => console.log('value of the second scan is',x));
-*/
+      }, 0)
+    ).subscribe(x => console.log('value of the second scan is',x));
+  */
 
 
   // let numbers$ = from([4, 5, 6]);
@@ -734,8 +750,8 @@ function test()
   //     //map((sum, index) => sum / (index + 1))
   //   )
   // )
-    //.subscribe(console.log);
-    //merge(numbers$, numbers$).subscribe(console.log);
+  //.subscribe(console.log);
+  //merge(numbers$, numbers$).subscribe(console.log);
 
   // Examples of java script objects (arrays inside objects)
   //   var defaults = {
