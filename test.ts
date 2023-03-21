@@ -797,3 +797,76 @@ function test() {
   // of(1, 2, 3) // Synchronously emits 1, 2, 3 and then completes.
   //   .subscribe(sumObserver);
 }
+
+ // const myPromise = new Promise((resolve, reject) => {
+  //   let a = false;
+  //   setTimeout(() => {
+  //     return (a) ? resolve('a is found!'): reject('sorry, no a');
+  //   }, 10000);
+  // }); 
+  
+  // myPromise
+  // .then(value => 
+  //   { 
+  //     console.log(value) 
+  //   })
+  // .catch(err => { 
+  //   console.log(err) 
+  // });
+  
+}
+
+
+
+// function resolveAfter2Seconds(x: any) {
+//   return new Promise(function(resolve, reject) {
+//     setTimeout(() => {
+//       resolve(x);
+//     }, 20000);
+//   }
+//   /* (resolve) => {
+//     setTimeout(() => {
+//       resolve(x);
+//     }, 20000);
+//   } */);
+// }
+
+// async function f1() {
+//   const x =  await resolveAfter2Seconds(10);
+//   console.log(x); // 10
+// }
+
+// f1();
+
+function callPromise(x : any) {
+  return new Promise((resolve, reject) => {
+    let a = true;
+    setTimeout(() => {
+      return (a) ? resolve('a is found!'): reject('sorry, no a');
+    }, 30000);
+  });
+}
+
+async function f2() {
+  const x =  await callPromise(10).then(value => 
+    {
+      console.log(value); 
+    }).catch(error => 
+    {
+      console.log(error); 
+    });
+  console.log(x); // 
+}
+ f2();
+
+// CONTINUATION
+/* 
+callPromise(10).then(value => {
+   console.log(value) 
+  })
+.catch(err => { 
+  console.log(err) 
+}); 
+ */
+
+console.log("End");
