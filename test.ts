@@ -798,23 +798,23 @@ function test() {
   //   .subscribe(sumObserver);
 }
 
- // const myPromise = new Promise((resolve, reject) => {
-  //   let a = false;
-  //   setTimeout(() => {
-  //     return (a) ? resolve('a is found!'): reject('sorry, no a');
-  //   }, 10000);
-  // }); 
+//  const myPromise = new Promise((resolve, reject) => {
+//     let a = false;
+//     setTimeout(() => {
+//       return (a) ? resolve('a is found!'): reject('sorry, no a');
+//     }, 10000);
+//   }); 
   
-  // myPromise
-  // .then(value => 
-  //   { 
-  //     console.log(value) 
-  //   })
-  // .catch(err => { 
-  //   console.log(err) 
-  // });
+//   myPromise
+//   .then(value => 
+//     { 
+//       console.log(value) 
+//     })
+//   .catch(err => { 
+//     console.log(err) 
+//   });
   
-}
+
 
 
 
