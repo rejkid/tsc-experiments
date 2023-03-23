@@ -848,7 +848,7 @@ function callPromise(x: any) {
 }
 
 async function f2() {
-  const x =  await callPromise(10).then(value => 
+  const x =  await callPromise("Renia").then(value => 
     {
       console.log(value); 
     }).catch(error => 
